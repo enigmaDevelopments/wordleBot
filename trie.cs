@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
 
 class Node
 {
@@ -175,6 +176,8 @@ class Trie
     public string MinMax(string file)
     {
         string[] possible = GetPossible();
+        if (possible.Length <= 2)
+            return possible[1];
         int min = int.MaxValue;
         string output = "";
         using (StreamReader sr = new StreamReader(file))
@@ -201,7 +204,7 @@ class Trie
                         }
                     }
                     Trie trie = this.Copy();
-                    trie.MakeMove(s, new string(data));
+                    trie.MakeMove(ln, new string(data));
                     max = Math.Max(trie.GetPossible().Length,max);
                 }
                 if (max < min)
