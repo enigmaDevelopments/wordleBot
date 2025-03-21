@@ -163,7 +163,7 @@ class Trie
             if (unknownMin.ContainsKey(i.data))
             {
                 if (!unknownMax.ContainsKey(i.data))
-                    unknownMax.Add(i.data, 0);
+                    unknownMax.Add(i.data, 4);
                 unknownMax[i.data] = Math.Min(unknownMax[i.data], count2[i.data]);
                 unknown2.Add(i);
                 continue;
@@ -171,6 +171,31 @@ class Trie
             incorrect.Add(i.data);
         }
         return true;
+    }
+
+    private int Score(string guess, string possble)
+    {
+        char[] data = "xxxxx".ToCharArray();
+        List<char> list = possble.ToList();
+        for (int i = 4; i >= 0; i--)
+        {
+            if (possble[i] == guess[i])
+            {
+                data[i] = 'o';
+                list.RemoveAt(i);
+            }
+        }
+        for (int i = 0; i < 5; i++)
+        {
+            if (list.Contains(guess[i]))
+            {
+                list.Remove(guess[i]);
+                data[i] = '-';
+            }
+        }
+        Trie trie = this.Copy();
+        trie.MakeMove(guess, new string(data));
+        return trie.GetPossible().Length;
     }
 
     public string MinMax(string file)
@@ -188,24 +213,7 @@ class Trie
                 string ln = sr.ReadLine();
                 foreach (string s in possible)
                 {
-                    char[] data = "xxxxx".ToCharArray();
-                    List<char> list = s.ToList();
-                    for (int i = 0; i < ln.Length; i++)
-                    {
-                        if (list[i] == ln[i])
-                            data[i] = 'o';
-                    }
-                    for (int i = 0; i < ln.Length; i++)
-                    {
-                        if (list.Contains(ln[i]))
-                        {
-                            list.Remove(ln[i]);
-                            data[i] = '-';
-                        }
-                    }
-                    Trie trie = this.Copy();
-                    trie.MakeMove(ln, new string(data));
-                    max = Math.Max(trie.GetPossible().Length,max);
+                    max = Math.Max(Score(ln,s), max);
                 }
                 if (max < min)
                 {

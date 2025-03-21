@@ -1,9 +1,4 @@
-﻿using System.Data;
-
-
-Trie wordle = new Trie("wordle-answers-alphabetical.txt");
-
-
+﻿Trie wordle = new Trie("wordle-answers-alphabetical.txt");
 
 while (true)
 {
@@ -16,6 +11,6 @@ while (true)
         Console.Write("Enter results: ");
         data = Console.ReadLine();
     } while (!wordle.MakeMove(word, data));
-    Console.WriteLine(String.Join(", ", wordle.GetPossible()));
     Console.WriteLine(wordle.MinMax("valid-wordle-words.txt"));
+    Console.WriteLine(String.Join(", ", wordle.GetPossible()));
 }
