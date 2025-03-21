@@ -172,6 +172,49 @@ class Trie
         return true;
     }
 
+    public string MinMax(string file)
+    {
+        string[] possible = GetPossible();
+        int min = int.MaxValue;
+        string output = "";
+        using (StreamReader sr = new StreamReader(file))
+        {
+            while (!sr.EndOfStream)
+            {
+                int max = 0;
+                string ln = sr.ReadLine();
+                foreach (string s in possible)
+                {
+                    char[] data = "xxxxx".ToCharArray();
+                    List<char> list = s.ToList();
+                    for (int i = 0; i < ln.Length; i++)
+                    {
+                        if (list[i] == ln[i])
+                            data[i] = 'o';
+                    }
+                    for (int i = 0; i < ln.Length; i++)
+                    {
+                        if (list.Contains(ln[i]))
+                        {
+                            list.Remove(ln[i]);
+                            data[i] = '-';
+                        }
+                    }
+                    Trie trie = this.Copy();
+                    trie.MakeMove(s, new string(data));
+                    max = Math.Max(trie.GetPossible().Length,max);
+                }
+                if (max < min)
+                {
+                    min = max;
+                    output = ln;
+                }
+                Console.WriteLine(ln);
+            }
+        }
+        return output;
+    }
+
     public bool Contains(string word)
     {
         Node current = root;
