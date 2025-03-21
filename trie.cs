@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.Design;
 using System.Net;
 
 class Node
@@ -34,7 +35,7 @@ class Trie
     private HashSet<char> incorrect = new HashSet<char>(26);
     private Dictionary<char,byte> unknownMin = new Dictionary<char, byte>(26);
     private Dictionary<char, byte> unknownMax = new Dictionary<char, byte>(26);
-    private HashSet<Info> unknown2 = new HashSet<Info>(255);
+    private HashSet<Info> unknown = new HashSet<Info>(255);
 
 
     public Trie(){}
@@ -44,7 +45,7 @@ class Trie
         incorrect = new HashSet<char>(trie.incorrect);
         unknownMin = new Dictionary<char, byte>(trie.unknownMin);
         unknownMax = new Dictionary<char, byte>(trie.unknownMax);
-        unknown2 = new HashSet<Info>(trie.unknown2);
+        unknown = new HashSet<Info>(trie.unknown);
     }
     public Trie(string file)
     {
@@ -99,6 +100,18 @@ class Trie
                     temp.Remove(c.Key);
                 }
             }
+            temp = str.ToList();
+            foreach (var c in unknownMax)
+            {
+                for (byte i = 0; i < c.Value; i++)
+                {
+                    if (i == c.Value)
+                        return;
+                    if (!temp.Contains(c.Key))
+                        break;
+                    temp.Remove(c.Key);
+                }
+            }
             list.Add(str);
             return;
         }
@@ -111,7 +124,7 @@ class Trie
         }
         foreach (char c in current.Childeren.Keys)
         {
-             if (incorrect.Contains(c) || unknown2.Contains(new Info(c,depth)))
+             if (incorrect.Contains(c) || unknown.Contains(new Info(c,depth)))
                 continue;
             Possible(current.Childeren[c], list, str + c);
         }
@@ -124,7 +137,6 @@ class Trie
         if (word.Length != 5 || data.Length != 5)
             return false;
         Dictionary<char,byte> count = new Dictionary<char, byte>(26);
-        Dictionary<char, byte> count2 = new Dictionary<char, byte>(26);
         List<char> unkownPos = new List<char>();
         List<Info> incorrectPos = new List<Info>();
         for (byte i = 0; i < data.Length; i++)
@@ -138,9 +150,6 @@ class Trie
             }
             else if (data[i] == 'x')
             {
-                if (!count2.ContainsKey(word[i]))
-                    count2.Add(word[i], 0);
-                count2[word[i]]++;
                 incorrectPos.Add(new Info(word[i],i));
             }
             else if (data[i] == '-')
@@ -149,7 +158,7 @@ class Trie
                     count.Add(word[i], 0);
                 unkownPos.Add(word[i]);
                 count[word[i]]++;
-                unknown2.Add(new Info(word[i], i));
+                unknown.Add(new Info(word[i], i));
             }
         }
         foreach (char c in unkownPos)
@@ -164,8 +173,8 @@ class Trie
             {
                 if (!unknownMax.ContainsKey(i.data))
                     unknownMax.Add(i.data, 4);
-                unknownMax[i.data] = Math.Min(unknownMax[i.data], count2[i.data]);
-                unknown2.Add(i);
+                unknownMax[i.data] = Math.Min(unknownMax[i.data], count[i.data]);
+                unknown.Add(i);
                 continue;
             }
             incorrect.Add(i.data);
@@ -202,7 +211,7 @@ class Trie
     {
         string[] possible = GetPossible();
         if (possible.Length <= 2)
-            return possible[1];
+            return possible[0];
         int min = int.MaxValue;
         string output = "";
         using (StreamReader sr = new StreamReader(file))
