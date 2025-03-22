@@ -82,36 +82,32 @@ class Trie
     public string[] GetPossible()
     {
         List<string> output = new List<string>();
-        Possible(root, output);
+        Dictionary<char, byte> map = new Dictionary<char, byte>(26);
+        foreach (char c in "abcdefghijklmnopqrstuvwxyz")
+            map.Add(c,0);
+        Possible(root, output, map);
         return output.ToArray();
     }
-    private void Possible(Node current,  List<string> list, string str = "")
+    private void Possible(Node current,  List<string> list, Dictionary<char, byte> charMap, string str = "")
     {
         byte depth = (byte)str.Length;
-        if (current.Childeren.Count == 0)
+        byte reverseDepth = (byte)(5 - depth);
+        byte neededMoves = 0;
+
+        foreach (var c in unknownMin) 
         {
-            List<char> temp = str.ToList();
-            foreach (var c in unknownMin)
-            {
-                for (byte i = 0; i < c.Value; i++)
-                {
-                    if (!temp.Contains(c.Key))
-                        return;
-                    temp.Remove(c.Key);
-                }
-            }
-            temp = str.ToList();
-            foreach (var c in unknownMax)
-            {
-                for (byte i = 0; i < c.Value; i++)
-                {
-                    if (i == c.Value)
-                        return;
-                    if (!temp.Contains(c.Key))
-                        break;
-                    temp.Remove(c.Key);
-                }
-            }
+            byte toAdd = (byte)(c.Value - charMap[c.Key]);
+            if (toAdd <= 0)
+                continue;
+            neededMoves += toAdd;
+            if (reverseDepth < neededMoves)
+                return;
+        }
+        foreach (var c in unknownMax)
+            if (c.Value < charMap[c.Key])
+                return;
+        if (current.Childeren.Count == 0)
+        { 
             list.Add(str);
             return;
         }
@@ -119,14 +115,22 @@ class Trie
         {
             char c = correct[depth];
             if (current.Childeren.ContainsKey(c))
-                Possible(current.Childeren[c], list, str + c);
+            {
+                Dictionary<char, byte> map = new Dictionary<char, byte>(charMap);
+                map.TryAdd(c, 0);
+                map[c]++;
+                Possible(current.Childeren[c], list, map, str + c);
+            }
             return;
         }
         foreach (char c in current.Childeren.Keys)
         {
              if (incorrect.Contains(c) || unknown.Contains(new Info(c,depth)))
                 continue;
-            Possible(current.Childeren[c], list, str + c);
+            Dictionary<char, byte> map = new Dictionary<char, byte>(charMap);
+            map.TryAdd(c, 0);
+            map[c]++;
+            Possible(current.Childeren[c], list,map, str + c);
         }
     }
 
@@ -154,8 +158,7 @@ class Trie
             }
             else if (data[i] == '-')
             {
-                if (!count.ContainsKey(word[i]))
-                    count.Add(word[i], 0);
+                count.TryAdd(word[i], 0);
                 unkownPos.Add(word[i]);
                 count[word[i]]++;
                 unknown.Add(new Info(word[i], i));
@@ -163,17 +166,18 @@ class Trie
         }
         foreach (char c in unkownPos)
         {
-            if (!unknownMin.ContainsKey(c))
-                unknownMin.Add(c, 0);
+            unknownMin.TryAdd(c, 0);
             unknownMin[c] = Math.Max(unknownMin[c], count[c]);
         }
         foreach (Info i in incorrectPos) 
         {
             if (unknownMin.ContainsKey(i.data))
             {
-                if (!unknownMax.ContainsKey(i.data))
-                    unknownMax.Add(i.data, 4);
-                unknownMax[i.data] = Math.Min(unknownMax[i.data], count[i.data]);
+                byte newVal;
+                unknownMax.TryAdd(i.data, 4);
+                if (count.TryGetValue(i.data, out newVal))
+                    newVal = 4;
+                unknownMax[i.data] = Math.Min(unknownMax[i.data], newVal);
                 unknown.Add(i);
                 continue;
             }
