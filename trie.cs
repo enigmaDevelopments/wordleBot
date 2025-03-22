@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Concurrent;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.Design;
 using System.Net;
 
@@ -225,8 +226,10 @@ class Trie
             {
                 int max = 0;
                 string ln = sr.ReadLine();
-                foreach (string s in possible)
-                    max = Math.Max(Score(ln,s), max);
+                Parallel.ForEach(possible, s =>
+                {
+                    max = Math.Max(Score(ln, s), max);
+                });
                 if (max < min)
                 {
                     min = max;
