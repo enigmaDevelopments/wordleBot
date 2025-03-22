@@ -220,25 +220,27 @@ class Trie
         int min = int.MaxValue;
         string output = "";
         int i = 0;
+        List<string> words = new List<string>();
         using (StreamReader sr = new StreamReader(file))
         {
             while (!sr.EndOfStream)
             {
-                int max = 0;
-                string ln = sr.ReadLine();
-                Parallel.ForEach(possible, s =>
-                {
-                    max = Math.Max(Score(ln, s), max);
-                });
-                if (max < min)
-                {
-                    min = max;
-                    output = ln;
-                }
-                if (i++ % 3713 == 0)
-                    Console.Write($"{i/148}% ");
+                words.Add(sr.ReadLine());
             }
         }
+        Parallel.ForEach(words, ln =>
+        {
+            int max = 0;
+            foreach (string s in possible)
+                max = Math.Max(Score(ln, s), max);
+            if (max < min)
+            {
+                min = max;
+                output = ln;
+            }
+            if (i++ % 3713 == 0)
+                Console.Write($"{i / 148}% ");
+        });
         Console.WriteLine();
         return output;
     }
