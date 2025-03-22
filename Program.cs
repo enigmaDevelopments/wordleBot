@@ -2,15 +2,12 @@
 
 while (true)
 {
-    string word;
+    string word = wordle.MinMax("valid-wordle-words.txt");
+    Console.WriteLine(word);
     string data;
     do
     {
-        Console.Write("Enter word: ");
-        word = Console.ReadLine();
         Console.Write("Enter results: ");
         data = Console.ReadLine();
     } while (!wordle.MakeMove(word, data));
-    Console.WriteLine(wordle.MinMax("valid-wordle-words.txt"));
-    Console.WriteLine(String.Join(", ", wordle.GetPossible()));
 }

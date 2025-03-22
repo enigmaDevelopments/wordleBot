@@ -218,6 +218,7 @@ class Trie
             return possible[0];
         int min = int.MaxValue;
         string output = "";
+        int i = 0;
         using (StreamReader sr = new StreamReader(file))
         {
             while (!sr.EndOfStream)
@@ -225,17 +226,17 @@ class Trie
                 int max = 0;
                 string ln = sr.ReadLine();
                 foreach (string s in possible)
-                {
                     max = Math.Max(Score(ln,s), max);
-                }
                 if (max < min)
                 {
                     min = max;
                     output = ln;
                 }
-                Console.WriteLine(ln);
+                if (i++ % 3713 == 0)
+                    Console.Write($"{i/148}% ");
             }
         }
+        Console.WriteLine();
         return output;
     }
 
