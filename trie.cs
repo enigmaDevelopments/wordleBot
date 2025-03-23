@@ -1,9 +1,4 @@
-﻿using System.Collections.Concurrent;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.Design;
-using System.Net;
-
-class Node
+﻿class Node
 {
     public Dictionary<char,Node> Childeren = new Dictionary<char, Node>(26);
     public Node(){}
@@ -20,7 +15,7 @@ class Info
     }
     public override int GetHashCode()
     {
-        return ((int)data-97) <<3 | (int)position;
+        return (data-97) <<3 | position;
     }
     public override bool Equals(object obj)
     {
@@ -215,6 +210,8 @@ class Trie
     public string MinMax(string file)
     {
         string[] possible = GetPossible();
+        if (possible.Length == 0)
+            return "No possible words";
         if (possible.Length <= 2)
             return possible[0];
         int min = int.MaxValue;
