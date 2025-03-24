@@ -113,7 +113,6 @@ class Trie
             if (current.Childeren.ContainsKey(c))
             {
                 Dictionary<char, byte> map = new Dictionary<char, byte>(charMap);
-                map.TryAdd(c, 0);
                 map[c]++;
                 Possible(current.Childeren[c], list, map, str + c);
             }
@@ -124,7 +123,6 @@ class Trie
              if (incorrect.Contains(c) || unknown.Contains(new Info(c,depth)))
                 continue;
             Dictionary<char, byte> map = new Dictionary<char, byte>(charMap);
-            map.TryAdd(c, 0);
             map[c]++;
             Possible(current.Childeren[c], list,map, str + c);
         }
