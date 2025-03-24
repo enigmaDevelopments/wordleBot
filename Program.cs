@@ -10,5 +10,14 @@ while (true)
         Console.Write("Enter results: ");
         data = Console.ReadLine();
     } while (!wordle.MakeMove(word, data));
-    word = wordle.MinMax("valid-wordle-words.txt");
+    while (true)
+        try
+        {
+            word = wordle.MinMax("valid-wordle-words.txt");
+            break;
+        }
+        catch
+        {
+            Console.WriteLine("error");
+        }
 }
