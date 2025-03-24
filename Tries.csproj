@@ -8,11 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Update="valid-wordle-words.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="answers\wordle-answers-alphabetical.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="wordle-answers-alphabetical.txt">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="valid\wordle-allowed-guesses.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

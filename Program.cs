@@ -1,4 +1,4 @@
-﻿Trie wordle = new Trie("wordle-answers-alphabetical.txt");
+﻿Trie wordle = new Trie("answers/wordle-answers-alphabetical.txt");
 
 string word = "crane";
 while (true)
@@ -13,7 +13,7 @@ while (true)
     while (true)
         try
         {
-            word = wordle.MinMax("valid-wordle-words.txt");
+            word = wordle.MinMax("valid/wordle-allowed-guesses.txt");
             break;
         }
         catch
